@@ -33,7 +33,8 @@ function App() {
   const [activeFolder, setActiveFolder] = useState('MAIN');
 
   const fetchTasks = useCallback(async () => {
-    const { data } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
+    if (error) console.error('Error fetching tasks:', error);
     if (data) {
       setTasks(data);
       const completedCount = data.filter(t => t.completed).length;
@@ -82,6 +83,7 @@ function App() {
       folder: activeFolder,
     }]).select();
 
+    if (error) console.error('Error adding task:', error);
     if (!error && data) {
       setTasks([data[0], ...tasks]);
       setNewTask('');
@@ -94,6 +96,7 @@ function App() {
   const toggleTask = async (task) => {
     const newStatus = !task.completed;
     const { error } = await supabase.from('tasks').update({ completed: newStatus }).eq('id', task.id);
+    if (error) console.error('Error toggling task:', error);
     if (!error) {
       if (newStatus) {
         setGameStatus('victory');
@@ -105,6 +108,7 @@ function App() {
 
   const deleteTask = async (id) => {
     const { error } = await supabase.from('tasks').delete().eq('id', id);
+    if (error) console.error('Error deleting task:', error);
     if (!error) fetchTasks();
   };
 
@@ -219,6 +223,13 @@ function App() {
             <AnimatePresence mode="popLayout">
               {tasks
                 .filter(t => (t.folder || 'MAIN') === activeFolder)
+                .sort((a, b) => {
+                  const priorityOrder = { high: 0, medium: 1, low: 2 };
+                  if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                  }
+                  return new Date(b.created_at) - new Date(a.created_at);
+                })
                 .map(task => (
                   <TaskItem
                     key={task.id}

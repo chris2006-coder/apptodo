@@ -14,6 +14,12 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
             whileHover={{ scale: 1.01 }}
             id={`task-${task.id}`}
             className={`mission-block group flex items-center justify-between ${task.completed ? 'completed' : ''}`}
+            style={{
+                borderLeft: `8px solid ${task.priority === 'high' ? '#EF4444' :
+                        task.priority === 'medium' ? '#F59E0B' : '#10B981'
+                    }`,
+                opacity: task.completed ? 0.6 : 1
+            }}
         >
             <div className="flex items-center gap-6">
                 {/* Custom Retro Checkbox */}
@@ -38,7 +44,12 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                     <div className="flex gap-4 items-center">
                         <span
                             className="text-[7px] px-2 py-0.5 border-2 border-[var(--theme-border)] font-bold"
-                            style={{ backgroundColor: task.priority === 'high' ? 'var(--theme-secondary)' : 'var(--theme-primary)', color: 'white' }}
+                            style={{
+                                backgroundColor:
+                                    task.priority === 'high' ? '#EF4444' :
+                                        task.priority === 'medium' ? '#F59E0B' : '#10B981',
+                                color: task.priority === 'medium' ? 'black' : 'white'
+                            }}
                         >
                             {task.priority.toUpperCase()}
                         </span>
