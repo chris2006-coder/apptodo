@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Trash2, CheckCircle } from 'lucide-react';
+import { Trash2, CheckCircle, Edit3, Calendar } from 'lucide-react';
 
-const TaskItem = ({ task, onToggle, onDelete }) => {
+const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
 
 
     return (
@@ -41,7 +41,7 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                         </span>
                     </div>
 
-                    <div className="flex gap-4 items-center">
+                    <div className="flex flex-wrap gap-4 items-center">
                         <span
                             className="text-[7px] px-2 py-0.5 border-2 border-[var(--theme-border)] font-bold"
                             style={{
@@ -53,11 +53,30 @@ const TaskItem = ({ task, onToggle, onDelete }) => {
                         >
                             {task.priority.toUpperCase()}
                         </span>
+
+                        {task.deadline && (
+                            <span className="flex items-center gap-1 text-[7px] font-bold opacity-70">
+                                <Calendar size={10} />
+                                DUE: {new Date(task.deadline).toLocaleDateString()}
+                            </span>
+                        )}
                     </div>
+
+                    {task.description && (
+                        <p className="text-[8px] opacity-60 leading-relaxed max-w-md mt-1 italic">
+                            {task.description}
+                        </p>
+                    )}
                 </div>
             </div>
 
             <div className="flex items-center gap-4">
+                <button
+                    onClick={onEdit}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-[var(--theme-accent)]/20 border-[3px] border-transparent hover:border-[var(--theme-border)]"
+                >
+                    <Edit3 size={18} className="text-[var(--theme-text)]" />
+                </button>
                 <button
                     onClick={() => onDelete(task.id)}
                     className="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-red-500/10 border-[3px] border-transparent hover:border-[var(--theme-border)]"

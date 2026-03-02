@@ -7,7 +7,7 @@ import TaskItem from './components/TaskItem';
 import PomodoroTimer from './components/PomodoroTimer';
 import FolderList from './components/FolderList';
 import BadgeDisplay from './components/BadgeDisplay';
-import { Plus, LogOut, Ghost, Star, Zap, Flame, Shield, Trophy } from 'lucide-react';
+import { Plus, LogOut, Ghost, Star, Zap, Flame, Shield, Trophy, Edit3, Calendar, X, Save } from 'lucide-react';
 
 const SAGAS = [
   { id: 'mario', name: 'Super Mario', icon: Star, color: '#5C94FC' },
@@ -32,6 +32,9 @@ function App() {
   const [folders, setFolders] = useState(['MAIN']);
   const [activeFolder, setActiveFolder] = useState('MAIN');
   const [totalCompleted, setTotalCompleted] = useState(0);
+  const [newDescription, setNewDescription] = useState('');
+  const [newDeadline, setNewDeadline] = useState('');
+  const [editingTask, setEditingTask] = useState(null);
 
   const fetchTasks = useCallback(async () => {
     const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -91,6 +94,8 @@ function App() {
     if (!newTask.trim() || !user) return;
     const { data, error } = await supabase.from('tasks').insert([{
       title: newTask,
+      description: newDescription,
+      deadline: newDeadline || null,
       user_id: user.id,
       priority: newPriority,
       folder: activeFolder,
@@ -100,8 +105,33 @@ function App() {
     if (!error && data) {
       setTasks([data[0], ...tasks]);
       setNewTask('');
+      setNewDescription('');
+      setNewDeadline('');
+      setNewPriority('medium');
       setGameStatus('jumping');
       setTimeout(() => setGameStatus('idle'), 500);
+      fetchTasks();
+    }
+  };
+
+  const updateTask = async (e) => {
+    e.preventDefault();
+    if (!editingTask || !editingTask.title.trim()) return;
+
+    const { error } = await supabase
+      .from('tasks')
+      .update({
+        title: editingTask.title,
+        description: editingTask.description,
+        deadline: editingTask.deadline || null,
+        priority: editingTask.priority,
+      })
+      .eq('id', editingTask.id);
+
+    if (error) {
+      console.error('Error updating task:', error);
+    } else {
+      setEditingTask(null);
       fetchTasks();
     }
   };
@@ -226,7 +256,22 @@ function App() {
                 className="w-full bg-transparent border-4 border-[var(--theme-border)] p-4 font-pixel text-[10px] outline-none"
                 required
               />
-              <div className="flex gap-4">
+              <textarea
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                placeholder="QUEST DETAILS (OPTIONAL)..."
+                className="w-full bg-transparent border-4 border-[var(--theme-border)] p-4 font-pixel text-[8px] outline-none min-h-[80px] resize-none"
+              />
+              <div className="flex flex-wrap gap-4">
+                <div className="flex-1 flex gap-2 items-center bg-transparent border-4 border-[var(--theme-border)] p-2">
+                  <Calendar size={14} className="opacity-50" />
+                  <input
+                    type="date"
+                    value={newDeadline}
+                    onChange={(e) => setNewDeadline(e.target.value)}
+                    className="bg-transparent font-pixel text-[8px] outline-none w-full"
+                  />
+                </div>
                 <select
                   value={newPriority}
                   onChange={(e) => setNewPriority(e.target.value)}
@@ -260,9 +305,76 @@ function App() {
                     task={task}
                     onToggle={() => toggleTask(task)}
                     onDelete={() => deleteTask(task.id)}
+                    onEdit={() => setEditingTask({ ...task })}
                   />
                 ))}
             </AnimatePresence>
+
+            {/* EDIT MODAL */}
+            {editingTask && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                <div className="pro-panel max-w-2xl w-full">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-[12px] font-black uppercase tracking-tighter">Edit Mission</h2>
+                    <button onClick={() => setEditingTask(null)} className="hover:rotate-90 transition-transform">
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <form onSubmit={updateTask} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[8px] opacity-60 uppercase font-black">Objective</label>
+                      <input
+                        type="text"
+                        value={editingTask.title}
+                        onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                        className="w-full bg-transparent border-4 border-[var(--theme-border)] p-4 font-pixel text-[10px] outline-none"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[8px] opacity-60 uppercase font-black">Details</label>
+                      <textarea
+                        value={editingTask.description || ''}
+                        onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
+                        className="w-full bg-transparent border-4 border-[var(--theme-border)] p-4 font-pixel text-[8px] outline-none min-h-[100px] resize-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[8px] opacity-60 uppercase font-black">Deadline</label>
+                        <div className="flex gap-2 items-center bg-transparent border-4 border-[var(--theme-border)] p-2">
+                          <Calendar size={14} className="opacity-50" />
+                          <input
+                            type="date"
+                            value={editingTask.deadline || ''}
+                            onChange={(e) => setEditingTask({ ...editingTask, deadline: e.target.value })}
+                            className="bg-transparent font-pixel text-[8px] outline-none w-full"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[8px] opacity-60 uppercase font-black">Priority</label>
+                        <select
+                          value={editingTask.priority}
+                          onChange={(e) => setEditingTask({ ...editingTask, priority: e.target.value })}
+                          className="w-full bg-transparent border-4 border-[var(--theme-border)] p-2 font-pixel text-[8px] outline-none h-[44px]"
+                        >
+                          <option value="low">LOW PRIORITY</option>
+                          <option value="medium">MEDIUM PRIORITY</option>
+                          <option value="high">HIGH PRIORITY</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="flex gap-4 pt-4">
+                      <button type="button" onClick={() => setEditingTask(null)} className="pro-button-secondary flex-1 py-4">CANCEL</button>
+                      <button type="submit" className="pro-button flex-1 py-4 flex items-center justify-center gap-2">
+                        <Save size={16} /> SAVE CHANGES
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
             {tasks.length === 0 && (
               <div className="text-center py-20 opacity-20 flex flex-col items-center gap-4">
                 <Ghost size={48} />

@@ -158,6 +158,28 @@
     filter: drop-shadow(0 0 10px var(--theme-accent));
   }
 
+  /* --- FORMS --- */
+  textarea,
+  input {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  [data-theme='pacman'] textarea,
+  [data-theme='pacman'] input {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: brightness(0);
+  }
+
+  [data-theme='pacman'] input[type="date"]::-webkit-calendar-picker-indicator,
+  [data-theme='pokemon'] input[type="date"]::-webkit-calendar-picker-indicator,
+  [data-theme='zelda'] input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+
 
 
   /* --- UTILITIES --- */
