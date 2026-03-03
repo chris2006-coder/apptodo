@@ -7,7 +7,22 @@ import TaskItem from './components/TaskItem';
 import PomodoroTimer from './components/PomodoroTimer';
 import FolderList from './components/FolderList';
 import BadgeDisplay from './components/BadgeDisplay';
-import { Plus, LogOut, Ghost, Star, Moon, Orbit, Rocket, Trophy, Edit3, Calendar, X, Save, Sparkles } from 'lucide-react';
+import { Plus, LogOut, Ghost, Star, Moon, Orbit, Rocket, Trophy, Edit3, Calendar, X, Save, Sparkles, Menu, Compass, Zap } from 'lucide-react';
+
+const HOROSCOPES = {
+  Aries: "The celestial alignment suggests a surge in productivity. Focus your energy on pending missions.",
+  Taurus: "Stable orbits ahead. It's a perfect time to organize your stellar archives and plan your next jump.",
+  Gemini: "Communication channels are clear. Reach out to fellow commanders for collaborative ventures.",
+  Cancer: "The moon's influence brings emotional clarity. Trust your intuition when prioritizing tasks.",
+  Leo: "Your inner sun is shining bright. Take lead on a challenging project and inspire others.",
+  Virgo: "Precision is your greatest asset today. Detail-oriented tasks will yield remarkable results.",
+  Libra: "Harmony in the system. Use this balance to resolve any lingering conflicts in your schedule.",
+  Scorpio: "Deep cosmic insights await. Dive into complex problems; the stars favor your analytical mind.",
+  Sagittarius: "A spirit of exploration governs your day. Try a new approach to an old problem.",
+  Capricorn: "Stellar foundations are strengthened. Your steady progress is leading to long-term success.",
+  Aquarius: "Innovation is in the air. Expect sudden sparks of brilliance in your creative endeavors.",
+  Pisces: "Fluid energies help you adapt to changing mission parameters. Stay flexible and imaginative."
+};
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -26,6 +41,9 @@ function App() {
   const [newDescription, setNewDescription] = useState('');
   const [newDeadline, setNewDeadline] = useState('');
   const [editingTask, setEditingTask] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [zodiacSign, setZodiacSign] = useState(localStorage.getItem('zodiacSign') || 'Aries');
+  const [dailyHoroscope, setDailyHoroscope] = useState('');
 
   const fetchTasks = useCallback(async () => {
     const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -63,6 +81,13 @@ function App() {
     });
     return () => subscription.unsubscribe();
   }, [fetchTasks]);
+
+  useEffect(() => {
+    // Simple logic for "daily" horoscope
+    const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+    const horoscopeText = HOROSCOPES[zodiacSign] || "The stars are currently silent...";
+    setDailyHoroscope(horoscopeText);
+  }, [zodiacSign]);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -153,7 +178,7 @@ function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Motion.div 
+        <Motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="pro-panel max-w-md w-full text-center"
@@ -165,7 +190,7 @@ function App() {
           </div>
           <h1 className="text-3xl font-extrabold mb-2 tracking-tight">ASTRAL TASK</h1>
           <p className="text-sm text-slate-400 mb-8">Synchronize with the system to begin.</p>
-          
+
           <form onSubmit={handleAuth} className="space-y-4 text-left">
             <div>
               <label className="text-[10px] uppercase font-bold text-slate-500 ml-2 mb-1 block">Email Address</label>
@@ -180,7 +205,7 @@ function App() {
               {isSignUp ? 'INITIALIZE ACCOUNT' : 'ESTABLISH LINK'}
             </button>
           </form>
-          
+
           <button onClick={() => setIsSignUp(!isSignUp)} className="w-full text-[10px] mt-8 uppercase font-semibold text-slate-400 hover:text-white transition-colors">
             {isSignUp ? 'Already connected? Log In' : 'New Commander? Initialize'}
           </button>
@@ -190,11 +215,13 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 overflow-x-hidden">
       <HUD
         score={score}
         coins={totalCompleted}
         world="Nebula"
+        user={user}
+        onMenuClick={() => setIsMenuOpen(true)}
       />
 
       <main className="max-w-7xl mx-auto pt-32 px-6 grid lg:grid-cols-12 gap-8 items-start">
@@ -202,8 +229,6 @@ function App() {
         {/* LEFT COMPONENT COLUMN */}
         <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-32">
           <GameHero state={gameStatus} />
-
-          <PomodoroTimer />
 
           <FolderList
             folders={folders}
@@ -215,9 +240,21 @@ function App() {
             }}
           />
 
-          <BadgeDisplay
-            completedCount={totalCompleted}
-          />
+          {/* HOROSCOPE PREVIEW */}
+          <div className="pro-panel bg-primary/5 border-primary/20 backdrop-blur-md">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles size={14} className="text-primary animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Daily Insight</span>
+              </div>
+              <span className="text-[9px] font-bold text-accent px-2 py-0.5 bg-accent/10 rounded-full border border-accent/20">
+                {zodiacSign.toUpperCase()}
+              </span>
+            </div>
+            <p className="text-xs italic leading-relaxed text-slate-300">
+              "{dailyHoroscope}"
+            </p>
+          </div>
 
           <button onClick={() => supabase.auth.signOut()} className="pro-button-secondary w-full flex items-center justify-center gap-4 py-6 text-sm">
             <LogOut size={18} /> TERMINATE SESSION
@@ -295,7 +332,7 @@ function App() {
             {/* EDIT MODAL */}
             {editingTask && (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
-                <Motion.div 
+                <Motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className="pro-panel max-w-2xl w-full"
@@ -368,6 +405,93 @@ function App() {
           </div>
         </div>
       </main>
+
+      {/* ASTRAL MENU OVERLAY */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <>
+            <Motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60]"
+            />
+            <Motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-slate-900/40 backdrop-blur-2xl border-l border-white/10 z-[70] shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pt-24"
+            >
+              <div className="p-8 overflow-y-auto flex-1 space-y-10 custom-scrollbar">
+                <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-primary/20 rounded-2xl border border-primary/30">
+                      <Compass size={24} className="text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-outfit font-extrabold tracking-tight">Astral Menu</h2>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Navigation & Utilities</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                    <X size={24} />
+                  </button>
+                </div>
+
+                {/* HOROSCOPE SECTION */}
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Sparkles size={14} className="text-accent" /> Stellar Horoscope
+                  </h3>
+                  <div className="pro-panel bg-white/5 border-white/10">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Universal Zodiac Sign</label>
+                        <select
+                          value={zodiacSign}
+                          onChange={(e) => {
+                            setZodiacSign(e.target.value);
+                            localStorage.setItem('zodiacSign', e.target.value);
+                          }}
+                          className="w-full"
+                        >
+                          {Object.keys(HOROSCOPES).map(sign => (
+                            <option key={sign} value={sign}>{sign.toUpperCase()}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 italic text-slate-300 text-sm leading-relaxed relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-2 opacity-10">
+                          <Sparkles size={40} />
+                        </div>
+                        "{dailyHoroscope}"
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* POMODORO SECTION */}
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Zap size={14} className="text-primary" /> Chronos Sync
+                  </h3>
+                  <PomodoroTimer />
+                </section>
+
+                {/* BADGES SECTION */}
+                <section className="space-y-4 pb-10">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Trophy size={14} className="text-accent" /> Cosmic Honors
+                  </h3>
+                  <BadgeDisplay completedCount={totalCompleted} />
+                </section>
+              </div>
+            </Motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
