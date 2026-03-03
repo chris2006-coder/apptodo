@@ -14,7 +14,7 @@ const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
             className={`mission-block group flex items-center justify-between transition-all duration-300 ${task.completed ? 'completed opacity-40' : ''}`}
             style={{
                 borderLeft: `4px solid ${task.priority === 'high' ? '#EF4444' :
-                        task.priority === 'medium' ? '#F59E0B' : '#10B981'
+                    task.priority === 'medium' ? '#F59E0B' : '#10B981'
                     }`,
                 background: task.completed ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.04)'
             }}
@@ -44,12 +44,12 @@ const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
                             className="text-[9px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider"
                             style={{
                                 backgroundColor: `${task.priority === 'high' ? 'rgba(239, 68, 68, 0.1)' :
-                                        task.priority === 'medium' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'
+                                    task.priority === 'medium' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(16, 185, 129, 0.1)'
                                     }`,
                                 color: task.priority === 'high' ? '#F87171' :
                                     task.priority === 'medium' ? '#FBBF24' : '#34D399',
                                 border: `1px solid ${task.priority === 'high' ? 'rgba(239, 68, 68, 0.2)' :
-                                        task.priority === 'medium' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)'
+                                    task.priority === 'medium' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)'
                                     }`
                             }}
                         >
@@ -86,7 +86,7 @@ const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
                     <Trash2 size={16} />
                 </button>
             </div>
-        </Motion.div>
+        </motion.div>
     );
 };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Moon, Star, Sun } from 'lucide-react';
 
 const GameHero = ({ state }) => {

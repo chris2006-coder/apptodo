@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion as Motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Play, Pause, RotateCcw, Sparkles, Brain, Moon, Timer, Zap } from 'lucide-react';
 
 const TIMER_MODES = {
@@ -62,7 +62,7 @@ const PomodoroTimer = () => {
                         strokeWidth="4"
                         fill="none"
                     />
-                    <Motion.circle
+                    <motion.circle
                         cx="96"
                         cy="96"
                         r="88"
