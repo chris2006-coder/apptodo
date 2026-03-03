@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence, motion as Motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from './lib/supabase';
 import HUD from './components/HUD';
 import GameHero from './components/GameHero';
@@ -192,7 +192,7 @@ function App() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
-        <Motion.div
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="pro-panel max-w-md w-full text-center"
@@ -223,7 +223,7 @@ function App() {
           <button onClick={() => setIsSignUp(!isSignUp)} className="w-full text-[10px] mt-8 uppercase font-semibold text-slate-400 hover:text-white transition-colors">
             {isSignUp ? 'Already connected? Log In' : 'New Commander? Initialize'}
           </button>
-        </Motion.div>
+        </motion.div>
       </div>
     );
   }
@@ -264,7 +264,7 @@ function App() {
                 <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">Daily Insight</span>
               </div>
               <span className="text-[9px] font-bold text-accent px-2 py-0.5 bg-accent/10 rounded-full border border-accent/20">
-                {zodiacSign.toUpperCase()}
+                {zodiacSign?.toUpperCase() || 'ARIES'}
               </span>
             </div>
             <p className="text-xs italic leading-relaxed text-slate-300">
@@ -348,7 +348,7 @@ function App() {
             {/* EDIT MODAL */}
             {editingTask && (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-md">
-                <Motion.div
+                <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   className="pro-panel max-w-2xl w-full"
@@ -409,7 +409,7 @@ function App() {
                       </button>
                     </div>
                   </form>
-                </Motion.div>
+                </motion.div>
               </div>
             )}
             {tasks.length === 0 && (
@@ -425,116 +425,118 @@ function App() {
       {/* ASTRAL MENU OVERLAY */}
       <AnimatePresence>
         {isMenuOpen && (
-          <>
-            <Motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60]"
-            />
-            <Motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-slate-900/40 backdrop-blur-2xl border-l border-white/10 z-[70] shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pt-24"
-            >
-              <div className="p-8 overflow-y-auto flex-1 space-y-10 custom-scrollbar">
-                <div className="flex items-center justify-between border-b border-white/5 pb-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-primary/20 rounded-2xl border border-primary/30">
-                      <Compass size={24} className="text-primary" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-outfit font-extrabold tracking-tight">Astral Menu</h2>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Navigation & Utilities</p>
-                    </div>
+          <motion.div
+            key="astral-menu-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
+            className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60]"
+          />
+        )}
+        {isMenuOpen && (
+          <motion.div
+            key="astral-menu-panel"
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-slate-900/40 backdrop-blur-2xl border-l border-white/10 z-[70] shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pt-24"
+          >
+            <div className="p-8 overflow-y-auto flex-1 space-y-10 custom-scrollbar">
+              <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-primary/20 rounded-2xl border border-primary/30">
+                    <Compass size={24} className="text-primary" />
                   </div>
-                  <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                    <X size={24} />
-                  </button>
+                  <div>
+                    <h2 className="text-xl font-outfit font-extrabold tracking-tight">Astral Menu</h2>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Navigation & Utilities</p>
+                  </div>
                 </div>
-
-                {/* PROFILE CONFIGURATION */}
-                <section className="space-y-4">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <User size={14} className="text-primary" /> Identity Configuration
-                  </h3>
-                  <div className="pro-panel bg-white/5 border-white/10 space-y-4">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Commander Name</label>
-                      <input
-                        type="text"
-                        value={profileName}
-                        onChange={(e) => setProfileName(e.target.value)}
-                        placeholder="Enter your name..."
-                        className="bg-slate-950/50 border-white/10 focus:border-primary/50"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Avatar URL</label>
-                      <input
-                        type="text"
-                        value={profileImage}
-                        onChange={(e) => setProfileImage(e.target.value)}
-                        placeholder="https://example.com/photo.jpg"
-                        className="bg-slate-950/50 border-white/10 focus:border-primary/50"
-                      />
-                    </div>
-                  </div>
-                </section>
-
-                {/* HOROSCOPE SECTION */}
-                <section className="space-y-4">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <Sparkles size={14} className="text-accent" /> Stellar Horoscope
-                  </h3>
-                  <div className="pro-panel bg-white/5 border-white/10">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Universal Zodiac Sign</label>
-                        <select
-                          value={zodiacSign}
-                          onChange={(e) => {
-                            setZodiacSign(e.target.value);
-                            localStorage.setItem('zodiacSign', e.target.value);
-                          }}
-                          className="w-full"
-                        >
-                          {Object.keys(HOROSCOPES).map(sign => (
-                            <option key={sign} value={sign}>{sign.toUpperCase()}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 italic text-slate-300 text-sm leading-relaxed relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-2 opacity-10">
-                          <Sparkles size={40} />
-                        </div>
-                        "{dailyHoroscope}"
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-                {/* POMODORO SECTION */}
-                <section className="space-y-4">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <Zap size={14} className="text-primary" /> Chronos Sync
-                  </h3>
-                  <PomodoroTimer />
-                </section>
-
-                {/* BADGES SECTION */}
-                <section className="space-y-4 pb-10">
-                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                    <Trophy size={14} className="text-accent" /> Cosmic Honors
-                  </h3>
-                  <BadgeDisplay completedCount={totalCompleted} />
-                </section>
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                  <X size={24} />
+                </button>
               </div>
-            </Motion.div>
-          </>
+
+              {/* PROFILE CONFIGURATION */}
+              <section className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <User size={14} className="text-primary" /> Identity Configuration
+                </h3>
+                <div className="pro-panel bg-white/5 border-white/10 space-y-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Commander Name</label>
+                    <input
+                      type="text"
+                      value={profileName}
+                      onChange={(e) => setProfileName(e.target.value)}
+                      placeholder="Enter your name..."
+                      className="bg-slate-950/50 border-white/10 focus:border-primary/50"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Avatar URL</label>
+                    <input
+                      type="text"
+                      value={profileImage}
+                      onChange={(e) => setProfileImage(e.target.value)}
+                      placeholder="https://example.com/photo.jpg"
+                      className="bg-slate-950/50 border-white/10 focus:border-primary/50"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* HOROSCOPE SECTION */}
+              <section className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Sparkles size={14} className="text-accent" /> Stellar Horoscope
+                </h3>
+                <div className="pro-panel bg-white/5 border-white/10">
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Universal Zodiac Sign</label>
+                      <select
+                        value={zodiacSign}
+                        onChange={(e) => {
+                          setZodiacSign(e.target.value);
+                          localStorage.setItem('zodiacSign', e.target.value);
+                        }}
+                        className="w-full"
+                      >
+                        {Object.keys(HOROSCOPES).map(sign => (
+                          <option key={sign} value={sign}>{sign.toUpperCase()}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 italic text-slate-300 text-sm leading-relaxed relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-2 opacity-10">
+                        <Sparkles size={40} />
+                      </div>
+                      "{dailyHoroscope}"
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* POMODORO SECTION */}
+              <section className="space-y-4">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Zap size={14} className="text-primary" /> Chronos Sync
+                </h3>
+                <PomodoroTimer />
+              </section>
+
+              {/* BADGES SECTION */}
+              <section className="space-y-4 pb-10">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Trophy size={14} className="text-accent" /> Cosmic Honors
+                </h3>
+                <BadgeDisplay completedCount={totalCompleted} />
+              </section>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
