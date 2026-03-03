@@ -44,6 +44,8 @@ function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [zodiacSign, setZodiacSign] = useState(localStorage.getItem('zodiacSign') || 'Aries');
   const [dailyHoroscope, setDailyHoroscope] = useState('');
+  const [profileName, setProfileName] = useState(localStorage.getItem('profileName') || '');
+  const [profileImage, setProfileImage] = useState(localStorage.getItem('profileImage') || '');
 
   const fetchTasks = useCallback(async () => {
     const { data, error } = await supabase.from('tasks').select('*').order('created_at', { ascending: false });
@@ -88,6 +90,18 @@ function App() {
     const horoscopeText = HOROSCOPES[zodiacSign] || "The stars are currently silent...";
     setDailyHoroscope(horoscopeText);
   }, [zodiacSign]);
+
+  useEffect(() => {
+    if (user && !profileName) {
+      const defaultName = user.email.split('@')[0].toUpperCase();
+      setProfileName(defaultName);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('profileName', profileName);
+    localStorage.setItem('profileImage', profileImage);
+  }, [profileName, profileImage]);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -221,6 +235,8 @@ function App() {
         coins={totalCompleted}
         world="Nebula"
         user={user}
+        profileName={profileName}
+        profileImage={profileImage}
         onMenuClick={() => setIsMenuOpen(true)}
       />
 
@@ -439,6 +455,35 @@ function App() {
                     <X size={24} />
                   </button>
                 </div>
+
+                {/* PROFILE CONFIGURATION */}
+                <section className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <User size={14} className="text-primary" /> Identity Configuration
+                  </h3>
+                  <div className="pro-panel bg-white/5 border-white/10 space-y-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Commander Name</label>
+                      <input
+                        type="text"
+                        value={profileName}
+                        onChange={(e) => setProfileName(e.target.value)}
+                        placeholder="Enter your name..."
+                        className="bg-slate-950/50 border-white/10 focus:border-primary/50"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase font-bold text-slate-500 ml-1">Avatar URL</label>
+                      <input
+                        type="text"
+                        value={profileImage}
+                        onChange={(e) => setProfileImage(e.target.value)}
+                        placeholder="https://example.com/photo.jpg"
+                        className="bg-slate-950/50 border-white/10 focus:border-primary/50"
+                      />
+                    </div>
+                  </div>
+                </section>
 
                 {/* HOROSCOPE SECTION */}
                 <section className="space-y-4">
