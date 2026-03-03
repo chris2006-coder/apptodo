@@ -1,10 +1,9 @@
-import React from 'react';
-import { motion as Motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Trash2, CheckCircle, Edit3, Calendar, Circle, Sparkles } from 'lucide-react';
 
 const TaskItem = ({ task, onToggle, onDelete, onEdit }) => {
     return (
-        <Motion.div
+        <motion.div
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

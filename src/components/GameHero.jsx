@@ -5,7 +5,7 @@ import { Sparkles, Moon, Star, Sun } from 'lucide-react';
 const GameHero = ({ state }) => {
     return (
         <div className="relative flex flex-col items-center justify-center p-4">
-            <Motion.div
+            <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="relative w-full aspect-video pro-panel overflow-hidden border-white/5 flex items-center justify-center"
@@ -14,7 +14,7 @@ const GameHero = ({ state }) => {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/10" />
 
                 {/* FLOATING ASTRAL OBJECTS */}
-                <Motion.div
+                <motion.div
                     animate={{
                         y: [0, -15, 0],
                         rotate: [0, 5, -5, 0]
@@ -24,19 +24,19 @@ const GameHero = ({ state }) => {
                 >
                     <div className="relative">
                         <Moon size={80} strokeWidth={1} className="text-slate-200 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
-                        <Motion.div
+                        <motion.div
                             animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.2, 1] }}
                             transition={{ duration: 3, repeat: Infinity }}
                             className="absolute -top-4 -right-4"
                         >
                             <Sparkles size={24} className="text-accent" />
-                        </Motion.div>
+                        </motion.div>
                     </div>
-                </Motion.div>
+                </motion.div>
 
                 {/* AMBIENT STARS */}
                 {[...Array(5)].map((_, i) => (
-                    <Motion.div
+                    <motion.div
                         key={i}
                         animate={{
                             opacity: [0.2, 0.6, 0.2],
@@ -54,26 +54,26 @@ const GameHero = ({ state }) => {
                         }}
                     >
                         <Star size={8} fill="currentColor" />
-                    </Motion.div>
+                    </motion.div>
                 ))}
 
                 {/* OVERLAY LABEL */}
                 <div className="absolute bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm p-3 text-slate-400 text-[10px] tracking-[0.2em] font-bold text-center border-t border-white/5 uppercase">
                     Astral System Synchronized
                 </div>
-            </Motion.div>
+            </motion.div>
 
             {/* STATUS FX */}
             <AnimatePresence>
                 {state === 'victory' && (
-                    <Motion.div
+                    <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: -10, opacity: 1 }}
                         exit={{ opacity: 0, scale: 1.1 }}
                         className="mt-6 font-outfit font-extrabold text-xl text-accent astral-glow uppercase tracking-wider"
                     >
                         Mission Accomplished
-                    </Motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>

@@ -7,7 +7,7 @@ import TaskItem from './components/TaskItem';
 import PomodoroTimer from './components/PomodoroTimer';
 import FolderList from './components/FolderList';
 import BadgeDisplay from './components/BadgeDisplay';
-import { Plus, LogOut, Ghost, Star, Moon, Orbit, Rocket, Trophy, Edit3, Calendar, X, Save, Sparkles, Menu, Compass, Zap } from 'lucide-react';
+import { Plus, LogOut, Ghost, Star, Moon, Orbit, Rocket, Trophy, Edit3, Calendar, X, Save, Sparkles, Menu, Compass, Zap, User } from 'lucide-react';
 
 const HOROSCOPES = {
   Aries: "The celestial alignment suggests a surge in productivity. Focus your energy on pending missions.",
