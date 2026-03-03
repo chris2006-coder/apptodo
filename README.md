@@ -1,8 +1,8 @@
-# LISTA CALIXTA 🎮
+# ASTRO PENDIENTES 🚀
 
-A gamified, retro-style task management application inspired by classic video games. Organize your daily quests, earn XP, and collect badges as you level up your productivity.
+A gamified, retro-style task management application inspired by the cosmos. Organize your daily quests, earn XP, and collect badges as you level up your productivity.
 
-![Lista Calixta Preview](public/preview.png) *(Note: Add a real preview image to public/preview.png if available)*
+![Astro Pendientes Preview](public/preview.png) *(Note: Add a real preview image to public/preview.png if available)*
 
 ## 🌟 Features
 
