@@ -1,22 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { Play, Pause, RotateCcw, Coffee, Sword, Timer } from 'lucide-react';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
+import { Play, Pause, RotateCcw, Sparkles, Brain, Moon, Timer, Zap } from 'lucide-react';
 
 const TIMER_MODES = {
-    work: { label: 'WORK', time: 25, color: 'var(--theme-accent)' },
-    shortBreak: { label: 'SHORT BREAK', time: 5, color: '#4ADE80' },
-    longBreak: { label: 'LONG BREAK', time: 15, color: '#3B82F6' },
+    work: { label: 'FOCUS', time: 25, color: 'var(--theme-primary)', icon: Zap },
+    shortBreak: { label: 'REST', time: 5, color: 'var(--theme-secondary)', icon: Moon },
+    longBreak: { label: 'DEEP REST', time: 15, color: 'var(--theme-accent)', icon: Sparkles },
 };
 
-const THEME_LABELS = {
-    mario: { work: 'QUEST', shortBreak: 'PAUSE', longBreak: 'CASTLE' },
-    pacman: { work: 'CHASE', shortBreak: 'COFFEE', longBreak: 'ARCADE' },
-    sonic: { work: 'DASH', shortBreak: 'REST', longBreak: 'CHILL' },
-    pokemon: { work: 'TRAIN', shortBreak: 'HEAL', longBreak: 'PC BOX' },
-    zelda: { work: 'EXPLORE', shortBreak: 'CAMP', longBreak: 'SHRINE' },
-};
-
-const PomodoroTimer = ({ saga = 'mario' }) => {
+const PomodoroTimer = () => {
     const [mode, setMode] = useState('work');
     const [timeLeft, setTimeLeft] = useState(TIMER_MODES.work.time * 60);
     const [isActive, setIsActive] = useState(false);
@@ -45,66 +37,91 @@ const PomodoroTimer = ({ saga = 'mario' }) => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const progress = (timeLeft / (TIMER_MODES[mode].time * 60)) * 100;
+    const totalSeconds = TIMER_MODES[mode].time * 60;
+    const progress = timeLeft / totalSeconds;
+    const CurrentIcon = TIMER_MODES[mode].icon;
 
     return (
-        <div className="pro-panel flex flex-col items-center gap-4">
-            <div className="flex items-center gap-2 mb-2">
-                <Timer size={16} />
-                <h3 className="text-[10px] uppercase font-pixel">
-                    {THEME_LABELS[saga]?.[mode] || TIMER_MODES[mode].label} TIME
+        <div className="pro-panel flex flex-col items-center gap-6">
+            <div className="flex items-center gap-3">
+                <Brain size={18} className="text-accent animate-astral" />
+                <h3 className="text-xs font-bold font-outfit uppercase tracking-[0.2em] opacity-60">
+                    Astral Sync
                 </h3>
             </div>
 
-            {/* DISPLAY */}
-            <div className="relative w-full aspect-square max-w-[180px] flex items-center justify-center border-8 border-theme-border bg-black/20 overflow-hidden">
-                {/* PROGRESS BAR (Vertical fill style) */}
-                <div
-                    className="absolute bottom-0 left-0 w-full transition-all duration-1000"
-                    style={{
-                        height: `${100 - progress}%`,
-                        backgroundColor: TIMER_MODES[mode].color,
-                        opacity: 0.3
-                    }}
-                />
+            {/* ASTRAL CIRCULAR DISPLAY */}
+            <div className="relative w-48 h-48 flex items-center justify-center">
+                {/* SVG Progress Circle */}
+                <svg className="absolute inset-0 w-full h-full -rotate-90">
+                    <circle
+                        cx="96"
+                        cy="96"
+                        r="88"
+                        stroke="rgba(255,255,255,0.05)"
+                        strokeWidth="4"
+                        fill="none"
+                    />
+                    <Motion.circle
+                        cx="96"
+                        cy="96"
+                        r="88"
+                        stroke={TIMER_MODES[mode].color}
+                        strokeWidth="4"
+                        strokeDasharray="553"
+                        initial={{ strokeDashoffset: 553 }}
+                        animate={{ strokeDashoffset: 553 * progress }}
+                        transition={{ duration: 1, ease: "linear" }}
+                        strokeLinecap="round"
+                        fill="none"
+                        className="drop-shadow-[0_0_8px_var(--theme-glow)]"
+                    />
+                </svg>
 
-                <div className="z-10 text-3xl font-pixel pixel-text-shadow">
-                    {formatTime(timeLeft)}
+                <div className="z-10 flex flex-col items-center">
+                    <span className="text-4xl font-outfit font-extrabold tracking-tighter">
+                        {formatTime(timeLeft)}
+                    </span>
+                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                        {TIMER_MODES[mode].label}
+                    </span>
                 </div>
             </div>
 
             {/* CONTROLS */}
-            <div className="flex gap-2">
+            <div className="flex gap-3">
                 <button
                     onClick={() => setIsActive(!isActive)}
-                    className="pro-button p-2"
-                    title={isActive ? 'Pause' : 'Start'}
+                    className="pro-button px-6 py-3 rounded-xl"
                 >
                     {isActive ? <Pause size={18} /> : <Play size={18} />}
                 </button>
                 <button
                     onClick={() => switchMode(mode)}
-                    className="pro-button p-2"
-                    title="Reset"
+                    className="pro-button-secondary p-3 rounded-xl"
                 >
                     <RotateCcw size={18} />
                 </button>
             </div>
 
             {/* MODE SELECTOR */}
-            <div className="grid grid-cols-3 gap-1 w-full mt-2">
-                {Object.keys(TIMER_MODES).map((m) => (
-                    <button
-                        key={m}
-                        onClick={() => switchMode(m)}
-                        className={`text-[8px] p-2 border-2 transition-all ${mode === m
-                            ? 'bg-[var(--theme-accent)] border-[var(--theme-border)] text-black'
-                            : 'bg-black/20 border-transparent opacity-60'
-                            }`}
-                    >
-                        {THEME_LABELS[saga]?.[m] || TIMER_MODES[m].label}
-                    </button>
-                ))}
+            <div className="grid grid-cols-3 gap-2 w-full mt-2">
+                {Object.keys(TIMER_MODES).map((m) => {
+                    const ModeIcon = TIMER_MODES[m].icon;
+                    return (
+                        <button
+                            key={m}
+                            onClick={() => switchMode(m)}
+                            className={`text-[9px] font-bold py-3 rounded-xl transition-all flex flex-col items-center gap-1.5 ${mode === m
+                                ? 'bg-primary/20 text-white border border-primary/30 shadow-[0_0_15px_rgba(109,40,217,0.2)]'
+                                : 'bg-white/5 text-slate-500 border border-transparent hover:bg-white/10'
+                                }`}
+                        >
+                            {m === mode ? <ModeIcon size={12} className="animate-pulse" /> : <div className="h-3" />}
+                            {TIMER_MODES[m].label}
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );

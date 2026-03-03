@@ -1,54 +1,54 @@
 import React from 'react';
-import { Star, Trophy, Target, Shield, Award, Crown } from 'lucide-react';
+import { Star, Trophy, Target, Shield, Award, Crown, Rocket, Orbit, Sparkles, Moon } from 'lucide-react';
 
-const sagaBadges = {
-    mario: { icon: Star, color: '#F8D870', name: 'INVINCIBILITY STAR' },
-    pacman: { icon: Trophy, color: '#FFFF00', name: 'GHOST HUNTER' },
-    sonic: { icon: Target, color: '#0040C0', name: 'CHAOS EMERALD' },
-    pokemon: { icon: Award, color: '#FF0000', name: 'GYM BADGE' },
-    zelda: { icon: Shield, color: '#00A800', name: 'TRIFORCE PIECE' },
-};
+const astralBadges = [
+    { icon: Star, name: 'NOVA' },
+    { icon: Rocket, name: 'QUASAR' },
+    { icon: Orbit, name: 'PULSAR' },
+    { icon: Sparkles, name: 'SUPERNOVA' },
+    { icon: Moon, name: 'ECLIPSE' },
+];
 
-const BadgeDisplay = ({ completedCount, saga = 'mario' }) => {
+const BadgeDisplay = ({ completedCount }) => {
     const badgesCount = Math.floor(completedCount / 3);
-    const badgeInfo = sagaBadges[saga] || sagaBadges.mario;
-    const Icon = badgeInfo.icon;
 
     if (badgesCount <= 0) return null;
 
     return (
         <div className="pro-panel overflow-hidden">
-            <div className="flex items-center gap-2 mb-3">
-                <Crown size={14} className="text-[var(--theme-accent)]" />
-                <h3 className="text-[10px] font-pixel opacity-70 tracking-tighter">ACHIEVEMENTS LOADED</h3>
+            <div className="flex items-center gap-2 mb-6">
+                <Crown size={16} className="text-accent animate-astral" />
+                <h3 className="text-xs font-bold font-outfit opacity-60 tracking-widest uppercase">Astral Achievements</h3>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-                {Array.from({ length: badgesCount }).map((_, i) => (
-                    <div
-                        key={i}
-                        className="relative group cursor-help"
-                        title={`${badgeInfo.name} #${i + 1}`}
-                    >
-                        <div className="w-10 h-10 bg-black/40 border-4 border-theme-border flex items-center justify-center hover:scale-110 transition-transform">
-                            <Icon
-                                size={18}
-                                color={badgeInfo.color}
-                                className="drop-shadow-[0_0_8px_rgba(255,255,255,0.3)] animate-bounce"
-                                style={{ animationDuration: `${2 + i % 2}s` }}
-                            />
+            <div className="flex flex-wrap gap-4">
+                {Array.from({ length: badgesCount }).map((_, i) => {
+                    const badge = astralBadges[i % astralBadges.length];
+                    const Icon = badge.icon;
+                    return (
+                        <div
+                            key={i}
+                            className="relative group cursor-help transition-all duration-300 hover:scale-110"
+                            title={`${badge.name} #${Math.floor(i / astralBadges.length) + 1}`}
+                        >
+                            <div className="w-12 h-12 glass-card flex items-center justify-center border-white/5 shadow-2xl">
+                                <Icon
+                                    size={20}
+                                    className="text-accent drop-shadow-[0_0_10px_var(--theme-glow)]"
+                                />
+                            </div>
+                            {/* MODERN TOOLTIP */}
+                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900/90 text-[10px] py-1.5 px-3 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-white/10 backdrop-blur-md">
+                                {badge.name}
+                            </div>
                         </div>
-                        {/* TOOLTIP (Retro style) */}
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[var(--theme-border)] text-white text-[6px] py-1 px-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-white/20">
-                            {badgeInfo.name}
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
-            <div className="mt-4 pt-2 border-t-2 border-white/10 flex justify-between items-center">
-                <span className="text-[8px] opacity-50">BONUS SCORE</span>
-                <span className="text-[10px] text-[var(--theme-accent)]">+{badgesCount * 1000} PTS</span>
+            <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Astral Energy</span>
+                <span className="text-sm font-outfit font-extrabold text-accent">+{badgesCount * 1000} LUX</span>
             </div>
         </div>
     );

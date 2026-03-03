@@ -1,61 +1,65 @@
 import React from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Moon, Star, Sun } from 'lucide-react';
 
-const sagaData = {
-    mario: {
-        hero: '/mario_hero.png',
-        label: 'MUSHROOM KINGDOM',
-    },
-    pacman: {
-        hero: '/pacman_hero.png',
-        label: 'ARCADE MAZE',
-    },
-    sonic: {
-        hero: '/sonic_hero.png',
-        label: 'GREEN HILL ZONE',
-    },
-    pokemon: {
-        hero: '/pokemon_hero.png',
-        label: 'PALLET TOWN',
-    },
-    zelda: {
-        hero: '/zelda_hero.png',
-        label: 'HYRULE FIELD',
-    }
-};
-
-const GameHero = ({ saga = 'mario', state }) => {
-    const current = sagaData[saga] || sagaData.mario;
-
+const GameHero = ({ state }) => {
     return (
-        <div className="relative flex flex-col items-center justify-center h-full w-full p-4">
-            {/* PROFESSIONAL RETRO FRAME */}
+        <div className="relative flex flex-col items-center justify-center p-4">
             <Motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                key={saga}
-                className="relative w-full max-w-md aspect-video pro-panel overflow-hidden border-8"
-                style={{
-                    borderColor: 'var(--theme-border)',
-                }}
+                className="relative w-full aspect-video pro-panel overflow-hidden border-white/5 flex items-center justify-center"
             >
-                {/* SCANLINE EFFECT */}
-                <div className="absolute inset-0 pointer-events-none z-10 opacity-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+                {/* ASTRAL VISUALIZER BACKGROUND */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/10" />
 
-                {/* HERO IMAGE */}
-                <Motion.img
-                    key={current.hero}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    src={current.hero}
-                    alt={saga}
-                    className="w-full h-full object-cover pixelated"
-                />
+                {/* FLOATING ASTRAL OBJECTS */}
+                <Motion.div
+                    animate={{
+                        y: [0, -15, 0],
+                        rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative z-10"
+                >
+                    <div className="relative">
+                        <Moon size={80} strokeWidth={1} className="text-slate-200 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+                        <Motion.div
+                            animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.2, 1] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                            className="absolute -top-4 -right-4"
+                        >
+                            <Sparkles size={24} className="text-accent" />
+                        </Motion.div>
+                    </div>
+                </Motion.div>
+
+                {/* AMBIENT STARS */}
+                {[...Array(5)].map((_, i) => (
+                    <Motion.div
+                        key={i}
+                        animate={{
+                            opacity: [0.2, 0.6, 0.2],
+                            scale: [1, 1.5, 1]
+                        }}
+                        transition={{
+                            duration: 2 + i,
+                            repeat: Infinity,
+                            delay: i * 0.5
+                        }}
+                        className="absolute text-slate-500"
+                        style={{
+                            top: `${20 + (i * 15)}%`,
+                            left: `${15 + (i * 20)}%`
+                        }}
+                    >
+                        <Star size={8} fill="currentColor" />
+                    </Motion.div>
+                ))}
 
                 {/* OVERLAY LABEL */}
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 p-2 text-white text-[8px] tracking-tighter text-center border-t-2 border-[var(--theme-border)]">
-                    {current.label}
+                <div className="absolute bottom-0 left-0 right-0 bg-white/5 backdrop-blur-sm p-3 text-slate-400 text-[10px] tracking-[0.2em] font-bold text-center border-t border-white/5 uppercase">
+                    Astral System Synchronized
                 </div>
             </Motion.div>
 
@@ -65,11 +69,10 @@ const GameHero = ({ saga = 'mario', state }) => {
                     <Motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: -10, opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="mt-4 text-theme-accent font-pixel text-[12px] pixel-text-shadow"
-                        style={{ color: 'var(--theme-accent)' }}
+                        exit={{ opacity: 0, scale: 1.1 }}
+                        className="mt-6 font-outfit font-extrabold text-xl text-accent astral-glow uppercase tracking-wider"
                     >
-                        STAGE CLEAR!
+                        Mission Accomplished
                     </Motion.div>
                 )}
             </AnimatePresence>

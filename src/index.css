@@ -1,70 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Default Mario Theme */
-  --theme-primary: #5C94FC;
-  --theme-secondary: #E45C10;
-  --theme-accent: #F8B800;
-  --theme-panel: rgba(255, 255, 255, 0.85);
-  --theme-text: #000000;
-  --theme-border: #000000;
-  --theme-bg-pattern: url('/mario_bg.png');
-}
-
-[data-theme='pacman'] {
-  --theme-primary: #000000;
-  --theme-secondary: #2121DE;
-  --theme-accent: #FFFF00;
-  --theme-panel: rgba(16, 16, 16, 0.8);
-  --theme-text: #FFFFFF;
-  --theme-border: #2121DE;
-  --theme-bg-pattern: url('/pacman_bg.png');
-  background-size: 40px 40px;
-}
-
-[data-theme='sonic'] {
-  --theme-primary: #0040C0;
-  --theme-secondary: #F8D870;
-  --theme-accent: #E45C10;
-  --theme-panel: rgba(255, 255, 255, 0.85);
-  --theme-text: #000000;
-  --theme-border: #000000;
-  --theme-bg-pattern: url('/sonic_bg.png');
-  background-size: 60px 60px, 60px 60px, 60px 60px, 60px 60px, 100% 100%;
-}
-
-[data-theme='pokemon'] {
-  --theme-primary: #ff5555;
-  --theme-secondary: #FFCC00;
-  --theme-accent: #3A5DA8;
-  --theme-panel: rgba(240, 240, 240, 0.85);
-  --theme-text: #000000;
-  --theme-border: #3A5DA8;
-  --theme-bg-pattern: url('/pokemon_bg.png');
-  background-size: 50px 50px;
-  background-position: 0 0, 25px 25px, 0 0;
-}
-
-[data-theme='zelda'] {
-  --theme-primary: #006400;
-  --theme-secondary: #A06020;
-  --theme-accent: #F8D800;
-  --theme-panel: rgba(250, 249, 246, 0.9);
-  --theme-text: #204000;
-  --theme-border: #204000;
-  --theme-bg-pattern: url('/zelda_bg.png');
-  background-size: 80px 140px;
+  --theme-bg: #0B0E14;
+  --theme-primary: #6D28D9;
+  --theme-secondary: #4F46E5;
+  --theme-accent: #8B5CF6;
+  --theme-panel: rgba(17, 24, 39, 0.7);
+  --theme-text: #F8FAFC;
+  --theme-text-muted: #94A3B8;
+  --theme-border: rgba(255, 255, 255, 0.1);
+  --theme-glow: rgba(109, 40, 217, 0.3);
 }
 
 @layer base {
   body {
-    font-family: 'Press Start 2P', system-ui;
-    image-rendering: pixelated;
-    @apply overflow-x-hidden text-[var(--theme-text)] min-h-screen font-pixel;
+    font-family: 'Inter', sans-serif;
+    @apply bg-[var(--theme-bg)] text-[var(--theme-text)] min-h-screen overflow-x-hidden selection:bg-[var(--theme-primary)] selection:text-white;
+  }
+
+  h1, h2, h3, h4, .font-outfit {
+    font-family: 'Outfit', sans-serif;
   }
 
   body::before {
@@ -75,178 +34,136 @@
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-image: var(--theme-bg-pattern);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transition: background-image 0.5s ease;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(109, 40, 217, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.1) 0%, transparent 40%),
+      var(--theme-bg);
+    animation: nebula-drift 20s ease-in-out infinite alternate;
+  }
+
+  /* Star Field */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: 
+      radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+      radial-gradient(1px 1px at 20% 50%, #fff, transparent),
+      radial-gradient(2px 2px at 40% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 60% 20%, #fff, transparent),
+      radial-gradient(2px 2px at 80% 40%, #fff, transparent),
+      radial-gradient(1px 1px at 90% 90%, #fff, transparent);
+    background-size: 200px 200px;
+    opacity: 0.3;
   }
 }
 
+@keyframes nebula-drift {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(2%, 2%); }
+}
 
 @layer components {
-
-  /* --- PROFESSIONAL RETRO PANELS --- */
+  /* --- SOFT GLASS PANELS --- */
   .pro-panel {
-    @apply relative border-[4px] border-[var(--theme-border)] p-6 backdrop-blur-xl;
+    @apply relative rounded-3xl border border-[var(--theme-border)] p-8 backdrop-blur-xl transition-all duration-300;
     background-color: var(--theme-panel);
-    color: var(--theme-text);
-    box-shadow:
-      inset -6px -6px 0px 0px rgba(0, 0, 0, 0.1),
-      inset 6px 6px 0px 0px rgba(255, 255, 255, 0.2),
-      8px 8px 0px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 
+      0 10px 30px -10px rgba(0, 0, 0, 0.5),
+      0 0 20px 0 var(--theme-glow);
   }
 
-  /* --- MISSION ITEM --- */
+  /* --- MODERN MISSION ITEM --- */
   .mission-block {
-    @apply relative p-6 border-[4px] border-[var(--theme-border)] transition-all cursor-pointer mb-4;
-    background-color: var(--theme-accent);
-    color: var(--theme-text);
-    box-shadow:
-      inset -4px -4px 0px 0px rgba(0, 0, 0, 0.2),
-      inset 4px 4px 0px 0px rgba(255, 255, 255, 0.3),
-      6px 6px 0px 0px rgba(0, 0, 0, 0.1);
+    @apply relative p-6 rounded-2xl border border-[var(--theme-border)] transition-all duration-300 cursor-pointer mb-4 flex items-center gap-4;
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .mission-block:hover {
     @apply -translate-y-1;
-    filter: brightness(1.1);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 15px var(--theme-glow);
   }
 
   .mission-block.completed {
-    @apply opacity-50 grayscale;
+    @apply opacity-40 grayscale;
   }
 
-  /* --- PRO BUTTONS --- */
+  /* --- SOFT ASTRAL BUTTONS --- */
   .pro-button {
-    @apply relative px-6 py-3 uppercase text-[10px] tracking-widest transition-all cursor-pointer;
-    background-color: var(--theme-secondary);
-    color: var(--theme-text);
-    border: 4px solid var(--theme-border);
-    box-shadow:
-      inset -4px -4px 0px 0px rgba(0, 0, 0, 0.2),
-      inset 4px 4px 0px 0px rgba(255, 255, 255, 0.3),
-      0px 6px 0px 0px var(--theme-border);
+    @apply relative px-8 py-3 rounded-2xl font-semibold tracking-wide transition-all duration-300 cursor-pointer flex items-center justify-center gap-2;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(109, 40, 217, 0.4);
+  }
+
+  .pro-button:hover {
+    @apply -translate-y-0.5;
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.6);
+    filter: brightness(1.1);
   }
 
   .pro-button:active {
-    @apply translate-y-1;
-    box-shadow:
-      inset -4px -4px 0px 0px rgba(0, 0, 0, 0.2),
-      inset 4px 4px 0px 0px rgba(255, 255, 255, 0.3),
-      0px 2px 0px 0px var(--theme-border);
+    @apply translate-y-0.5 scale-95;
   }
 
   .pro-button-secondary {
-    @apply pro-button;
-    background-color: var(--theme-primary);
+    @apply px-8 py-3 rounded-2xl font-semibold transition-all duration-300 cursor-pointer;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--theme-border);
+    color: var(--theme-text);
   }
 
-  /* --- SAGA SELECTION PIPES / BLOCKS --- */
-  .saga-item {
-    @apply relative cursor-pointer transition-all flex flex-col items-center p-2 border-4 border-transparent;
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-
-  .saga-item:hover {
+  .pro-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--theme-accent);
-  }
-
-  .saga-active {
-    border-color: var(--theme-accent);
-    background-color: rgba(255, 255, 255, 0.1);
-    filter: drop-shadow(0 0 10px var(--theme-accent));
   }
 
   /* --- FORMS --- */
   textarea,
-  input {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+  input,
+  select {
+    @apply w-full bg-slate-900/50 rounded-2xl border border-[var(--theme-border)] p-4 outline-none transition-all duration-300 text-[14px];
   }
 
-  [data-theme='pacman'] textarea,
-  [data-theme='pacman'] input {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+  textarea:focus,
+  input:focus,
+  select:focus {
+    @apply border-[var(--theme-accent)] bg-slate-900/80;
+    box-shadow: 0 0 0 4px var(--theme-glow);
   }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: brightness(0);
-  }
-
-  [data-theme='pacman'] input[type="date"]::-webkit-calendar-picker-indicator,
-  [data-theme='pokemon'] input[type="date"]::-webkit-calendar-picker-indicator,
-  [data-theme='zelda'] input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
-
-
 
   /* --- UTILITIES --- */
-  .pixel-text-shadow {
-    text-shadow: 3px 3px 0px #000;
+  .astral-glow {
+    text-shadow: 0 0 10px var(--theme-glow);
   }
 
-  .pixelated {
-    image-rendering: pixelated;
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+    @apply backdrop-blur-md rounded-2xl border border-white/10;
   }
 }
 
 /* --- ANIMATIONS --- */
-@keyframes coin-bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-15px);
-  }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-.animate-coin {
-  animation: coin-bounce 0.8s ease-in-out infinite;
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
-@keyframes cloud-float {
-  from {
-    transform: translateX(110vw);
-  }
-
-  to {
-    transform: translateX(-20vw);
-  }
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; filter: brightness(1.2); }
 }
 
-.cloud {
-  animation: cloud-float 80s linear infinite;
-}
-
-.hit-shake {
-  animation: shake 0.2s cubic-bezier(.36, .07, .19, .97) both;
-}
-
-@keyframes shake {
-
-  10%,
-  90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-
-  20%,
-  80% {
-    transform: translate3d(2px, 0, 0);
-  }
-
-  30%,
-  50%,
-  70% {
-    transform: translate3d(-4px, 0, 0);
-  }
-
-  40%,
-  60% {
-    transform: translate3d(4px, 0, 0);
-  }
+.animate-astral {
+  animation: pulse-glow 3s linear infinite;
 }
